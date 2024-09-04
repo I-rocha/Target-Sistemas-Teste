@@ -1,8 +1,4 @@
-const fs = require("fs");
-
-const json = fs.readFileSync(`${__dirname}/dados.json`);
-
-const data = JSON.parse(json);
+const data = require("./dados.json");
 
 // Comparadores entre dois valores
 const minOfTwo = (v1, v2) => (v1 < v2 ? v1 : v2);
