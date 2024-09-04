@@ -1,33 +1,42 @@
 const fs = require("fs");
 
-const json = fs.readFileSync(`${__dirname}/data.json`);
+const json = fs.readFileSync(`${__dirname}/dados.json`);
 
 const data = JSON.parse(json);
 
-const sum = (data) => {
-  const summed = data.reduce((v1, v2) => {
-    // Previne campos vazios
-    v1 = v1 || 0;
-    v2 = v2 || 0;
-    return v1 + v2;
-  }, 0);
-  return summed;
-};
+// Comparadores entre dois valores
+const minOfTwo = (v1, v2) => (v1 < v2 ? v1 : v2);
+const maxOfTwo = (v1, v2) => (v1 > v2 ? v1 : v2);
 
-const min = (data) => Math.min(...data);
+// Mínimo
+const min = data.reduce(
+  (minValue, curr) => minOfTwo(minValue, curr.valor),
+  Number.POSITIVE_INFINITY
+);
 
-const max = (data) => Math.max(...data);
+// Mínimo sobre os dados não nulo
+const minNormalized = data
+  .filter((el) => el.valor)
+  .reduce(
+    (minValue, curr) => minOfTwo(minValue, curr.valor),
+    Number.POSITIVE_INFINITY
+  );
 
-const overAverageDay = function (data) {
-  // Filtra dados nulos ou invalidos
-  const normalized = data.filter((el) => !!el);
+// Máximo
+const max = data.reduce((maxValue, curr) => maxOfTwo(maxValue, curr.valor), 0);
 
-  const avg = sum(normalized) / normalized.length;
-  const daysVal = normalized.filter((el) => el > avg);
+// Total
+const sum = data.reduce((acc, curr) => acc + curr.valor, 0);
 
-  return daysVal.length;
-};
+// Média sobre dados não nulo
+const avg = sum / data.filter((el) => el.valor).length;
 
-console.log(`Minimo mensal: ${min(data).toFixed(2)}`);
-console.log(`Maximo mensal ${max(data).toFixed(2)}`);
-console.log(`Quantidade de dias acima da media: ${overAverageDay(data)}`);
+// Dias acima da média
+const overAverage = data
+  .filter((el) => el.valor)
+  .filter((el) => el.valor > avg);
+
+console.log(`Minimo mensal: ${min.toFixed(2)}`);
+console.log(`Minimo mensal (não nulo): ${minNormalized.toFixed(2)}`);
+console.log(`Maximo mensal ${max.toFixed(2)}`);
+console.log(`Quantidade de dias acima da media: ${overAverage.length}`);
